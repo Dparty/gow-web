@@ -46,13 +46,13 @@ const Register = () => {
       label: "手機號碼",
       required: true,
     },
-    {
-      id: 3,
-      name: "birthday",
-      type: "date",
-      placeholder: "請輸入生日",
-      label: "出生日期",
-    },
+    // {
+    //   id: 3,
+    //   name: "birthday",
+    //   type: "date",
+    //   placeholder: "請輸入生日",
+    //   label: "出生日期",
+    // },
     {
       id: 4,
       name: "password",
@@ -98,12 +98,23 @@ const Register = () => {
   };
 
   return (
-    <div className="app">
+    <div className="form-wrapper">
       <form onSubmit={handleSubmit}>
         <h1>歡迎</h1>
         {inputs.map((input) => (
           <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
         ))}
+        <div className="formInput">
+          <label>出生日期</label>
+          <input
+            type="text"
+            name="birthday"
+            className="form-control"
+            onFocus={(e) => (e.currentTarget.type = "date")}
+            onBlur={(e) => (e.currentTarget.type = "text")}
+            placeholder="请选择出生日期"
+          />
+        </div>
         <div className="formInput">
           <label>性別</label>
           <div>
