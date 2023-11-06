@@ -24,11 +24,13 @@ const FormInput: React.FC<any> = (props) => {
 
   return (
     <div className="formInput">
-      <label>{label}</label>
+      {label && <label>{label}</label>}
       <input
         {...inputProps}
         onChange={onChange}
         onBlur={handleFocus}
+        // eslint-disable-next-line react/no-unknown-property
+        focused={focused.toString()}
         onFocus={() => inputProps.name === "confirmPassword" && setFocused(true)}
       />
       <span>{errorMessage}</span>
