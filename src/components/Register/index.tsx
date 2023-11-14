@@ -10,6 +10,7 @@ import { areaCodeType, RegisterFormProps } from "../../types";
 import DatePicker from "react-mobile-datepicker";
 import { convertDate } from "../../utils/convertDate";
 import { translatePage } from "../../utils/transform";
+import { phoneNumValidate } from "../PhoneInput";
 
 const defaultValues: RegisterFormProps = {
   firstName: "",
@@ -60,11 +61,12 @@ const Register = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setShowMessage(false);
 
     // validate phone
-    const reg_tel = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
-    if (!reg_tel.test(values.number)) {
-      alert("手機號碼格式不對");
+    if (!phoneNumValidate(values.number, values.areaCode)) {
+      setMessage("手機號碼格式不對");
+      setShowMessage(true);
       return;
     }
 

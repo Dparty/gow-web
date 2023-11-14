@@ -16,25 +16,32 @@ interface PhoneFormValues {
   verificationCode: string;
 }
 
-const PhoneInput = ({ onChange, values }: PhoneInputProps) => {
-  const [num, setNum] = useState(0); // for getting verification code countdown
-  const [message, setMessage] = useState("");
-  const [showMessage, setShowMessage] = useState(false);
+export const phoneNumValidate = (phoneNum: string, areaCode: string) => {
   const reg: Record<string, RegExp> = {
     "86": /^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/,
     "852": /^([4|5|6|7|8|9])d{7}$/,
     "853": /^[6]([8|6])d{5}$/,
   };
+  const reg_tel = reg[areaCode];
+
+  return reg_tel.test(phoneNum);
+};
+
+const PhoneInput = ({ onChange, values }: PhoneInputProps) => {
+  const [num, setNum] = useState(0); // for getting verification code countdown
+  const [message, setMessage] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
 
   const handleSend = async () => {
+    setShowMessage(false);
     if (num !== 0) {
       setMessage("請勿多次獲取驗證碼");
       setShowMessage(true);
       return;
     }
     let a = 60;
-    const reg_tel = reg[values.areaCode];
-    if (reg_tel.test(values.number)) {
+
+    if (phoneNumValidate(values.number, values.areaCode)) {
       setNum(a);
       const t1 = setInterval(() => {
         a = a - 1;

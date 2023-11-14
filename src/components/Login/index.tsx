@@ -5,6 +5,7 @@ import FormInput from "../FormInput";
 import PhoneInput from "../PhoneInput";
 import { login } from "../../api/api";
 import Message from "../Message";
+import { phoneNumValidate } from "../PhoneInput";
 import { areaCodeType, LoginFormProps, LoginProps, PhoneFormValues } from "../../types";
 
 const defaultValues: LoginFormProps = {
@@ -36,8 +37,7 @@ const Login = () => {
     e.preventDefault();
 
     // validate phone
-    const reg_tel = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
-    if (!reg_tel.test(values.number)) {
+    if (!phoneNumValidate(values.number, values.areaCode)) {
       setShowMessage(true);
       return;
     }
