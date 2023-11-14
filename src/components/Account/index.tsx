@@ -1,33 +1,6 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./index.css";
-import FormInput from "../FormInput";
-import PhoneInput from "../PhoneInput";
-import { login, getAccountInfo } from "../../api/api";
-
-enum areaCodeType {
-  MainlandChina = "86",
-  HongKong = "852",
-  Macao = "853",
-}
-
-interface PhoneNumber {
-  areaCode: areaCodeType;
-  number: string;
-}
-
-interface LoginProps {
-  phoneNumber: PhoneNumber;
-  password: string;
-  verificationCode: string;
-}
-
-interface LoginFormProps {
-  verificationCode: string;
-  number: string;
-  areaCode: areaCodeType;
-  password: string;
-}
+import { getAccountInfo } from "../../api/api";
 
 const defaultValues: any = {
   firstName: "",
@@ -37,6 +10,12 @@ const defaultValues: any = {
 const AccountPage = () => {
   const [values, setValues] = useState(defaultValues);
   const [token, setToken] = useState(localStorage.getItem("USERTOKEN"));
+
+  useEffect(() => {
+    if (!token) {
+      window.location.href = "/";
+    }
+  }, []);
 
   const getInfo = async () => {
     try {
@@ -48,6 +27,11 @@ const AccountPage = () => {
     }
   };
 
+  const logout = () => {
+    localStorage.removeItem("USERTOKEN");
+    window.location.href = "/";
+  };
+
   useEffect(() => {
     getInfo();
   }, []);
@@ -55,10 +39,17 @@ const AccountPage = () => {
   return (
     <div className="form-wrapper">
       <h1>會員頁面</h1>
-      <p>
-        {values.firstName}
-        {values.lastName}
-      </p>
+      {token ? (
+        <>
+          <p>
+            {values.firstName}
+            {values.lastName}
+          </p>
+          <div onClick={logout}> 登出</div>
+        </>
+      ) : (
+        <div>{"未登錄"}</div>
+      )}
     </div>
   );
 };

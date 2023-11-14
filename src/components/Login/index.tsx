@@ -1,33 +1,11 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
+import "../common.css";
 import "./index.css";
 import FormInput from "../FormInput";
 import PhoneInput from "../PhoneInput";
 import { login } from "../../api/api";
-
-enum areaCodeType {
-  MainlandChina = "86",
-  HongKong = "852",
-  Macao = "853",
-}
-
-interface PhoneNumber {
-  areaCode: areaCodeType;
-  number: string;
-}
-
-interface LoginProps {
-  phoneNumber: PhoneNumber;
-  password: string;
-  verificationCode: string;
-}
-
-interface LoginFormProps {
-  verificationCode: string;
-  number: string;
-  areaCode: areaCodeType;
-  password: string;
-}
+import Message from "../Message";
+import { areaCodeType, LoginFormProps, LoginProps, PhoneFormValues } from "../../types";
 
 const defaultValues: LoginFormProps = {
   verificationCode: "",
@@ -38,13 +16,9 @@ const defaultValues: LoginFormProps = {
 
 const Login = () => {
   const [values, setValues] = useState<LoginFormProps>(defaultValues);
+  const [showMessage, setShowMessage] = useState(false);
 
-  // const phoneFormValues: Record<string, any> = {
-  //   verificationCode: 0,
-  //   number: "",
-  //   areaCode: "86",
-  // };
-
+  // password input config
   const inputs = [
     {
       id: 1,
@@ -58,13 +32,13 @@ const Login = () => {
     },
   ];
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // validate phone
     const reg_tel = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
     if (!reg_tel.test(values.number)) {
-      alert("手機號碼格式不對");
+      setShowMessage(true);
       return;
     }
 
@@ -79,19 +53,17 @@ const Login = () => {
 
     const res = await login(data);
 
-    console.log(res);
     if (res) {
       localStorage.setItem("USERTOKEN", res.token);
       window.location.href = "/account";
     }
-    // storage sessions
   };
 
   const onChange = (e: any) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  const onChangePhone = (e: any) => {
+  const onChangePhone = (e: PhoneFormValues) => {
     setValues({
       ...values,
       areaCode: e.areaCode,
@@ -101,22 +73,35 @@ const Login = () => {
   };
 
   return (
-    <div className="form-wrapper">
-      <form onSubmit={handleSubmit}>
-        <h1>會員登錄</h1>
-        <div className="form-content">
-          <PhoneInput onChange={onChangePhone} values={values} />
-          {inputs.map((input) => (
-            <FormInput
-              key={input.id}
-              {...input}
-              value={values[input.name as keyof LoginFormProps]}
-              onChange={onChange}
-            />
-          ))}
-        </div>
-        <button>登錄</button>
-      </form>
+    <div className="login">
+      <div className="form-wrapper">
+        <form onSubmit={handleSubmit}>
+          <h1>會員登錄</h1>
+          <div className="form-content">
+            <PhoneInput onChange={onChangePhone} values={values} />
+            {inputs.map((input) => (
+              <FormInput
+                key={input.id}
+                {...input}
+                value={values[input.name as keyof LoginFormProps]}
+                onChange={onChange}
+              />
+            ))}
+          </div>
+          <button>登錄</button>
+          <p>
+            沒有帳號？<a href="/register">點擊註冊會員</a>
+          </p>
+        </form>
+      </div>
+      {showMessage && (
+        <Message
+          message="手機號碼格式不對"
+          onClose={() => {
+            setShowMessage(false);
+          }}
+        />
+      )}
     </div>
   );
 };

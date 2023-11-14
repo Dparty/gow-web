@@ -1,7 +1,7 @@
 import { Configuration, ConfigurationParameters, RestaurantApi } from "@dparty/restaurant-ts-sdk";
 import axios from "axios";
 
-export const token = localStorage.getItem("token");
+export const token = localStorage.getItem("USERTOKEN");
 
 // export const basePath = "https://ordering-api-uat.sum-foods.com";
 export const basePath = "https://restaurant-uat.sum-foods.com";
@@ -40,7 +40,7 @@ export const register = async (data: any) => {
 };
 
 export const getAccountInfo = async () => {
-  const token = localStorage.getItem("USERTOKEN");
+  
   if(!token)  return; // navigate
   const config: any = {
     headers: {
