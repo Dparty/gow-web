@@ -2,19 +2,26 @@ import React from "react";
 import { useState } from "react";
 import "./index.css";
 import FormInput from "../FormInput";
-import { restaurantApi } from "../../api/api";
+import { register, restaurantApi } from "../../api/api";
 import PhoneInput from "../PhoneInput";
+import moment from "moment";
+
+enum areaCodeType {
+  MainlandChina = "86",
+  HongKong = "852",
+  Macao = "853",
+}
 
 const map: Record<string, any> = {
   firstName: "",
   lastName: "",
-  username: "",
-  phone: "",
   birthday: "",
   password: "",
   confirmPassword: "",
   gender: "",
-  region: "+86",
+  verificationCode: "",
+  number: "",
+  areaCode: areaCodeType.MainlandChina,
 };
 
 const focusMap: Array<boolean> = [];
@@ -52,32 +59,51 @@ const Register = () => {
     },
   ];
 
-  // const getTableList = async (restaurantId: any) => {
-  //   try {
-  //     const res = await restaurantApi.getRestaurant({ id: restaurantId });
-  //     if (res) {
-  //       console.log(res.tables);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    // getTableList(values);
 
-    console.log(values);
+    // validate phone
+    const reg_tel = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
+    if (!reg_tel.test(values.number)) {
+      alert("手機號碼格式不對");
+      return;
+    }
+
+    const data = {
+      phoneNumber: {
+        areaCode: values.areaCode,
+        number: values.number,
+      },
+      verificationCode: values.verificationCode,
+      password: values.password,
+      gender: values.password,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      birthday: moment.utc(`${values.birthday} ${"00:00"}`).unix(),
+    };
+
+    const res = await register(data);
+
+    console.log(res);
+    if (res) {
+      alert("註冊成功，跳轉登錄");
+      window.location.href = "/login";
+    }
+    // storage sessions
+  };
+
+  const onChangePhone = (e: any) => {
+    setValues({
+      ...values,
+      areaCode: e.areaCode,
+      number: e.number,
+      verificationCode: e.verificationCode,
+    });
   };
 
   const onChange = (e: any) => {
     console.log(e.target.name, e.target.value);
     setValues({ ...values, [e.target.name]: e.target.value });
-  };
-
-  // 獲取驗證碼
-  const requireCode = () => {
-    console.log(`${values.phone} 獲取驗證碼`);
   };
 
   return (
@@ -137,7 +163,7 @@ const Register = () => {
             <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
           ))}
 
-          <PhoneInput />
+          <PhoneInput onChange={onChangePhone} values={values} />
 
           <div className="agree-checkbox">
             <input
