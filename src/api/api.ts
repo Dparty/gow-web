@@ -5,14 +5,16 @@ export const token = localStorage.getItem("USERTOKEN");
 
 export const baseUrl = "https://gow.macao-notification.com";
 
-const axiosConfig = {
+const config = {
   headers: {
       'Content-Type': 'application/json;charset=UTF-8',
-  }
+      'Authorization': `Bearer ${token}`,
+  },
 };
 
 export const getVerifyCode = async (data: {phoneNumber: PhoneNumber}) => {
-  return await axios.post(`${baseUrl}/verification`,  data, axiosConfig);
+  const res = await axios.post(`${baseUrl}/verification`,  data);
+  return res.data;
 };
 
 export const login = async (data: LoginProps) => {
@@ -21,19 +23,24 @@ export const login = async (data: LoginProps) => {
 };
 
 export const register = async (data: RegisterParams) => {
-    const res = await axios.post(`${baseUrl}/accounts`,  data, axiosConfig);
+    const res = await axios.post(`${baseUrl}/accounts`,  data);
     return res.data;
 };
 
 export const getAccountInfo = async () => {
   if(!token)  return; // navigate
-  const config: any = {
-    headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        'Authorization': `Bearer ${token}`,
-    },
-  };
   const res = await axios.get(`${baseUrl}/me`, config);
   return res.data;
 };
 
+export const editAccount = async () => {
+  if(!token)  return; // navigate
+  const res = await axios.put(`${baseUrl}/me`, config);
+  return res.data;
+};
+
+export const getAccountList = async () => {
+  if(!token)  return; 
+  const res = await axios.get(`${baseUrl}/accounts`, config);
+  return res.data;
+};

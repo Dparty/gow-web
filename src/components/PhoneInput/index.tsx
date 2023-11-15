@@ -35,12 +35,13 @@ const PhoneInput = ({ onChange, values, requireCode = true }: PhoneInputProps) =
 
   const handleSend = async () => {
     if (num !== 0) {
-      if (showMessage === false) {
-        setMessage("請勿多次獲取驗證碼");
-        setShowMessage(true);
-      }
+      setMessage("請勿多次獲取驗證碼");
+      setShowMessage(true);
+
       return;
     }
+    setShowMessage(false);
+
     let a = 60;
 
     if (phoneNumValidate(values.number, values.areaCode)) {
@@ -61,7 +62,7 @@ const PhoneInput = ({ onChange, values, requireCode = true }: PhoneInputProps) =
       };
       // 獲取驗證碼
       try {
-        getVerifyCode(data);
+        await getVerifyCode(data);
       } catch (e) {
         setMessage("獲取驗證碼失敗");
         setShowMessage(true);
@@ -72,11 +73,7 @@ const PhoneInput = ({ onChange, values, requireCode = true }: PhoneInputProps) =
     }
   };
   const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const reg_num = /^[0-9]*$/;
-    // if (reg_num.test(e.target.value)) {
-    // setNumber(e.target.value);
     onChange?.({ ...values, number: e.target.value });
-    // }
   };
 
   const onChangeRegion = (e: any) => {
