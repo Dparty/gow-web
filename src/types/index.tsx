@@ -39,3 +39,13 @@ export interface RegisterFormProps {
   password: string;
   confirmPassword: string;
 }
+
+export interface RegisterParams {
+  firstName: string;
+  lastName: string;
+  birthday: number;
+  gender: string;
+  verificationCode: string;
+  phoneNumber: PhoneNumber;
+  password: string;
+}

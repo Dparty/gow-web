@@ -6,7 +6,7 @@ import { register } from "../../api/api";
 import PhoneInput from "../PhoneInput";
 import moment from "moment";
 import Message from "../Message";
-import { areaCodeType, RegisterFormProps } from "../../types";
+import { areaCodeType, RegisterFormProps, RegisterParams } from "../../types";
 import DatePicker from "react-mobile-datepicker";
 import { convertDate } from "../../utils/convertDate";
 import { translatePage } from "../../utils/transform";
@@ -30,7 +30,7 @@ const Register = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
   const [selectBirthOpen, setSelectBirthOpen] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date(1990, 0, 1));
 
   const handleCheck = (event: any) => {
     setIsCheckTerms(event.target.checked);
@@ -70,7 +70,7 @@ const Register = () => {
       return;
     }
 
-    const data = {
+    const data: RegisterParams = {
       phoneNumber: {
         areaCode: values.areaCode,
         number: values.number,
@@ -181,6 +181,7 @@ const Register = () => {
                 </p>
                 <DatePicker
                   value={date}
+                  max={new Date()}
                   isOpen={selectBirthOpen}
                   onSelect={handleSelectBirth}
                   onCancel={handleCancel}
