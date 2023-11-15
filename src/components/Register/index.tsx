@@ -91,12 +91,21 @@ const Register = () => {
       if (res) {
         setMessage("註冊成功，跳轉登錄");
         setShowMessage(true);
-        window.location.href = "/login";
+        setTimeout(function () {
+          window.location.href = "/login";
+        }, 2000);
       }
-    } catch (e) {
-      console.log(e);
-      setMessage("註冊失败");
-      setShowMessage(true);
+    } catch (e: any) {
+      if (e?.response?.data?.code === "40009") {
+        setMessage("用戶已存在");
+        setShowMessage(true);
+        setTimeout(function () {
+          window.location.href = "/login";
+        }, 2000);
+      } else {
+        setMessage("註冊失败");
+        setShowMessage(true);
+      }
     }
   };
 
