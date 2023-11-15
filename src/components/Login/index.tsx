@@ -26,9 +26,9 @@ const Login = () => {
       name: "password",
       type: "password",
       placeholder: "請輸入密碼",
-      errorMessage: "密碼六到二十位數字",
+      errorMessage: "密碼八位以上",
       label: "密碼",
-      pattern: `^[0-9]{6,20}$`, //todo
+      pattern: `.{8,}`, //todo
       required: true,
     },
   ];
@@ -78,7 +78,7 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <h1>會員登錄</h1>
           <div className="form-content">
-            <PhoneInput onChange={onChangePhone} values={values} />
+            <PhoneInput onChange={onChangePhone} values={values} requireCode={false} />
             {inputs.map((input) => (
               <FormInput
                 key={input.id}

@@ -38,13 +38,13 @@ const Register = () => {
 
   const inputs = [
     {
-      id: 4,
+      id: 1,
       name: "password",
       type: "password",
       placeholder: "請輸入密碼",
-      errorMessage: "密碼六到二十位數字",
+      errorMessage: "密碼八位以上",
       label: "密碼",
-      pattern: `^[0-9]{6,20}$`, //todo
+      pattern: `.{8,}`, //todo
       required: true,
     },
     {
@@ -83,10 +83,11 @@ const Register = () => {
       // birthday: moment.utc(`${values.birthday} ${"00:00"}`).unix(),
       birthday: moment.utc(`${convertDate(date, "YYYY-MM-DD")} ${"00:00"}`).unix(),
     };
+    setShowMessage(false);
 
     try {
       const res = await register(data);
-      console.log(res);
+
       if (res) {
         setMessage("註冊成功，跳轉登錄");
         setShowMessage(true);

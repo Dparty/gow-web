@@ -16,7 +16,7 @@ export const getVerifyCode = async (data: {phoneNumber: PhoneNumber}) => {
 };
 
 export const login = async (data: LoginProps) => {
-  const res = await axios.post(`${baseUrl}/sessions`,  data, axiosConfig);
+  const res = await axios.post(`${baseUrl}/sessions`,  data);
   return res.data;
 };
 
