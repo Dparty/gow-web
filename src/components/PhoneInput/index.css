@@ -1,21 +1,27 @@
-.phone-group{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+.phone-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  .phone-group-region{
-    height: 50%;
-  }
-  
-  .phone-group-num{
-    flex: 2;
-    margin-left: 10px; 
-  }
+.phone-group-region {
+  height: 50%;
+}
 
-  .phone-validate-group{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* width: 280px; */
-  }
+.phone-group-num {
+  flex: 2;
+  margin-left: 10px;
+}
+
+.phone-validate-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* width: 280px; */
+}
+
+.formInput-phone {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}

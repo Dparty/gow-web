@@ -1,18 +1,47 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
+import "../common.css";
 import "./index.css";
+import Message from "../Message";
+import { areaCodeType } from "../../types";
 import { getVerifyCode } from "../../api/api";
 
-const PhoneInput = ({ onChange, values }: any) => {
-  // const [values, setValues] = useState(map);
-  const [verificationCode, setVerificationCode] = useState(0);
-  const [number, setNumber] = useState("");
-  const [areaCode, setAreaCode] = useState("+86");
-  const [num, setNum] = useState(0);
+interface PhoneInputProps {
+  values: PhoneFormValues;
+  onChange: (e: any) => void;
+}
+
+interface PhoneFormValues {
+  areaCode: areaCodeType;
+  number: string;
+  verificationCode: string;
+}
+
+export const phoneNumValidate = (phoneNum: string, areaCode: string) => {
+  const reg: Record<string, RegExp> = {
+    "86": /^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/,
+    "852": /^([4|5|6|7|8|9])d{7}$/,
+    "853": /^[6]([8|6])d{5}$/,
+  };
+  const reg_tel = reg[areaCode];
+
+  return reg_tel.test(phoneNum);
+};
+
+const PhoneInput = ({ onChange, values }: PhoneInputProps) => {
+  const [num, setNum] = useState(0); // for getting verification code countdown
+  const [message, setMessage] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
 
   const handleSend = async () => {
-    let a = 10;
-    const reg_tel = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
-    if (reg_tel.test(number)) {
+    setShowMessage(false);
+    if (num !== 0) {
+      setMessage("請勿多次獲取驗證碼");
+      setShowMessage(true);
+      return;
+    }
+    let a = 60;
+
+    if (phoneNumValidate(values.number, values.areaCode)) {
       setNum(a);
       const t1 = setInterval(() => {
         a = a - 1;
@@ -24,34 +53,35 @@ const PhoneInput = ({ onChange, values }: any) => {
 
       const data = {
         phoneNumber: {
-          areaCode: "86",
-          number: number,
+          areaCode: values.areaCode,
+          number: values.number,
         },
       };
       // 獲取驗證碼
-      getVerifyCode(data);
-      // setValues({ ...values, number: number });
+      try {
+        getVerifyCode(data);
+      } catch (e) {
+        setMessage("獲取驗證碼失敗");
+        setShowMessage(true);
+      }
     } else {
-      alert("手机号格式不正确");
+      setMessage("手機號格式不對");
+      setShowMessage(true);
     }
   };
   const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
     const reg_num = /^[0-9]*$/;
     // if (reg_num.test(e.target.value)) {
-    setNumber(e.target.value);
-    console.log(e.target.value);
+    // setNumber(e.target.value);
     onChange?.({ ...values, number: e.target.value });
     // }
   };
 
   const onChangeRegion = (e: any) => {
-    setAreaCode(e.target.value);
     onChange?.({ ...values, areaCode: e.target.value });
   };
 
-  const onChangeCode = (e: any) => {
-    // setValues({ ...values, verificationCode: e.target.value });
-    setVerificationCode(e.target.value);
+  const onChangeCode = (e: ChangeEvent<HTMLInputElement>) => {
     onChange?.({ ...values, verificationCode: e.target.value });
   };
 
@@ -65,7 +95,7 @@ const PhoneInput = ({ onChange, values }: any) => {
           className="phone-group-areaCode"
           name="areaCode"
           onChange={onChangeRegion}
-          value={areaCode}
+          value={values.areaCode}
         >
           <option value={"86"}>+86</option>
           <option value={"852"}>+852</option>
@@ -74,7 +104,7 @@ const PhoneInput = ({ onChange, values }: any) => {
 
         <input
           key={2}
-          value={number}
+          value={values.number}
           onChange={onChangeInput}
           name="number"
           className="phone-group-num"
@@ -90,12 +120,22 @@ const PhoneInput = ({ onChange, values }: any) => {
           name="verificationCode"
           className="phone-validate-group-num"
           placeholder="請輸入验证码"
+          value={values.verificationCode}
           required={true}
         />
         <div className="phone-validate-btn" onClick={handleSend}>
           {num === 0 ? "獲取驗證碼" : num + "秒"}
         </div>
       </div>
+
+      {showMessage && (
+        <Message
+          message={message}
+          onClose={() => {
+            setShowMessage(false);
+          }}
+        />
+      )}
     </div>
   );
 };

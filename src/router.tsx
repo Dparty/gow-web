@@ -23,13 +23,17 @@ export function lazyWithRetry(componentImport: any) {
   });
 }
 
-const Home = lazyWithRetry(() => import("./components/Register"));
+const Register = lazyWithRetry(() => import("./components/Register"));
 const Login = lazyWithRetry(() => import("./components/Login"));
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
   },
   {
     path: "/login",
