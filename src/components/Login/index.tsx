@@ -18,6 +18,7 @@ const defaultValues: LoginFormProps = {
 const Login = () => {
   const [values, setValues] = useState<LoginFormProps>(defaultValues);
   const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState("");
 
   // password input config
   const inputs = [
@@ -38,6 +39,7 @@ const Login = () => {
 
     // validate phone
     if (!phoneNumValidate(values.number, values.areaCode)) {
+      setMessage("手機號碼格式不對");
       setShowMessage(true);
       return;
     }
@@ -47,15 +49,20 @@ const Login = () => {
         areaCode: values.areaCode,
         number: values.number,
       },
-      verificationCode: values.verificationCode,
+      // verificationCode: values.verificationCode,
       password: values.password,
     };
 
-    const res = await login(data);
+    try {
+      const res = await login(data);
 
-    if (res) {
-      localStorage.setItem("USERTOKEN", res.token);
-      window.location.href = "/account";
+      if (res) {
+        localStorage.setItem("USERTOKEN", res.token);
+        window.location.href = "/account";
+      }
+    } catch (e) {
+      setMessage("手機或密碼錯誤");
+      setShowMessage(true);
     }
   };
 
@@ -96,7 +103,7 @@ const Login = () => {
       </div>
       {showMessage && (
         <Message
-          message="手機號碼格式不對"
+          message={message}
           onClose={() => {
             setShowMessage(false);
           }}

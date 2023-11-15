@@ -17,8 +17,8 @@ export interface PhoneNumber {
 
 export interface LoginProps {
   phoneNumber: PhoneNumber;
-  password: string;
-  verificationCode: string;
+  password?: string;
+  verificationCode?: string;
 }
 
 export interface LoginFormProps {
