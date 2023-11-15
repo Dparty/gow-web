@@ -6,7 +6,7 @@ import { register } from "../../api/api";
 import PhoneInput from "../PhoneInput";
 import moment from "moment";
 import Message from "../Message";
-import { areaCodeType, RegisterFormProps } from "../../types";
+import { areaCodeType, RegisterFormProps, RegisterParams } from "../../types";
 import DatePicker from "react-mobile-datepicker";
 import { convertDate } from "../../utils/convertDate";
 import { translatePage } from "../../utils/transform";
@@ -30,7 +30,7 @@ const Register = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
   const [selectBirthOpen, setSelectBirthOpen] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date(1990, 0, 1));
 
   const handleCheck = (event: any) => {
     setIsCheckTerms(event.target.checked);
@@ -38,13 +38,13 @@ const Register = () => {
 
   const inputs = [
     {
-      id: 4,
+      id: 1,
       name: "password",
       type: "password",
       placeholder: "請輸入密碼",
-      errorMessage: "密碼六到二十位數字",
+      errorMessage: "密碼八位以上",
       label: "密碼",
-      pattern: `^[0-9]{6,20}$`, //todo
+      pattern: `.{8,}`, //todo
       required: true,
     },
     {
@@ -70,7 +70,7 @@ const Register = () => {
       return;
     }
 
-    const data = {
+    const data: RegisterParams = {
       phoneNumber: {
         areaCode: values.areaCode,
         number: values.number,
@@ -83,10 +83,11 @@ const Register = () => {
       // birthday: moment.utc(`${values.birthday} ${"00:00"}`).unix(),
       birthday: moment.utc(`${convertDate(date, "YYYY-MM-DD")} ${"00:00"}`).unix(),
     };
+    setShowMessage(false);
 
     try {
       const res = await register(data);
-      console.log(res);
+
       if (res) {
         setMessage("註冊成功，跳轉登錄");
         setShowMessage(true);
@@ -181,6 +182,7 @@ const Register = () => {
                 </p>
                 <DatePicker
                   value={date}
+                  max={new Date()}
                   isOpen={selectBirthOpen}
                   onSelect={handleSelectBirth}
                   onCancel={handleCancel}

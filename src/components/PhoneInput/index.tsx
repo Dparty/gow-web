@@ -8,6 +8,7 @@ import { getVerifyCode } from "../../api/api";
 interface PhoneInputProps {
   values: PhoneFormValues;
   onChange: (e: any) => void;
+  requireCode?: boolean;
 }
 
 interface PhoneFormValues {
@@ -20,23 +21,24 @@ export const phoneNumValidate = (phoneNum: string, areaCode: string) => {
   const reg: Record<string, RegExp> = {
     "86": /^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/,
     "852": /^([4|5|6|7|8|9])d{7}$/,
-    "853": /^[6]([8|6])d{5}$/,
+    "853": /^[6]\d{7}/,
   };
   const reg_tel = reg[areaCode];
 
   return reg_tel.test(phoneNum);
 };
 
-const PhoneInput = ({ onChange, values }: PhoneInputProps) => {
+const PhoneInput = ({ onChange, values, requireCode = true }: PhoneInputProps) => {
   const [num, setNum] = useState(0); // for getting verification code countdown
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
 
   const handleSend = async () => {
-    setShowMessage(false);
     if (num !== 0) {
-      setMessage("請勿多次獲取驗證碼");
-      setShowMessage(true);
+      if (showMessage === false) {
+        setMessage("請勿多次獲取驗證碼");
+        setShowMessage(true);
+      }
       return;
     }
     let a = 60;
@@ -113,20 +115,22 @@ const PhoneInput = ({ onChange, values }: PhoneInputProps) => {
         />
       </div>
 
-      <div className="phone-validate-group">
-        <input
-          key={3}
-          onChange={onChangeCode}
-          name="verificationCode"
-          className="phone-validate-group-num"
-          placeholder="請輸入验证码"
-          value={values.verificationCode}
-          required={true}
-        />
-        <div className="phone-validate-btn" onClick={handleSend}>
-          {num === 0 ? "獲取驗證碼" : num + "秒"}
+      {requireCode && (
+        <div className="phone-validate-group">
+          <input
+            key={3}
+            onChange={onChangeCode}
+            name="verificationCode"
+            className="phone-validate-group-num"
+            placeholder="請輸入验证码"
+            value={values.verificationCode}
+            required={true}
+          />
+          <div className="phone-validate-btn" onClick={handleSend}>
+            {num === 0 ? "獲取驗證碼" : num + "秒"}
+          </div>
         </div>
-      </div>
+      )}
 
       {showMessage && (
         <Message

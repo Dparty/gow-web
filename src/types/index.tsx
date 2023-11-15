@@ -17,8 +17,8 @@ export interface PhoneNumber {
 
 export interface LoginProps {
   phoneNumber: PhoneNumber;
-  password: string;
-  verificationCode: string;
+  password?: string;
+  verificationCode?: string;
 }
 
 export interface LoginFormProps {
@@ -38,4 +38,14 @@ export interface RegisterFormProps {
   areaCode: areaCodeType;
   password: string;
   confirmPassword: string;
+}
+
+export interface RegisterParams {
+  firstName: string;
+  lastName: string;
+  birthday: number;
+  gender: string;
+  verificationCode: string;
+  phoneNumber: PhoneNumber;
+  password: string;
 }

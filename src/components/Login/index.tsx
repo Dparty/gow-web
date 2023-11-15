@@ -18,6 +18,7 @@ const defaultValues: LoginFormProps = {
 const Login = () => {
   const [values, setValues] = useState<LoginFormProps>(defaultValues);
   const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState("");
 
   // password input config
   const inputs = [
@@ -26,9 +27,9 @@ const Login = () => {
       name: "password",
       type: "password",
       placeholder: "請輸入密碼",
-      errorMessage: "密碼六到二十位數字",
+      errorMessage: "密碼八位以上",
       label: "密碼",
-      pattern: `^[0-9]{6,20}$`, //todo
+      pattern: `.{8,}`, //todo
       required: true,
     },
   ];
@@ -38,6 +39,7 @@ const Login = () => {
 
     // validate phone
     if (!phoneNumValidate(values.number, values.areaCode)) {
+      setMessage("手機號碼格式不對");
       setShowMessage(true);
       return;
     }
@@ -47,15 +49,20 @@ const Login = () => {
         areaCode: values.areaCode,
         number: values.number,
       },
-      verificationCode: values.verificationCode,
+      // verificationCode: values.verificationCode,
       password: values.password,
     };
 
-    const res = await login(data);
+    try {
+      const res = await login(data);
 
-    if (res) {
-      localStorage.setItem("USERTOKEN", res.token);
-      window.location.href = "/account";
+      if (res) {
+        localStorage.setItem("USERTOKEN", res.token);
+        window.location.href = "/account";
+      }
+    } catch (e) {
+      setMessage("手機或密碼錯誤");
+      setShowMessage(true);
     }
   };
 
@@ -78,7 +85,7 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <h1>會員登錄</h1>
           <div className="form-content">
-            <PhoneInput onChange={onChangePhone} values={values} />
+            <PhoneInput onChange={onChangePhone} values={values} requireCode={false} />
             {inputs.map((input) => (
               <FormInput
                 key={input.id}
@@ -96,7 +103,7 @@ const Login = () => {
       </div>
       {showMessage && (
         <Message
-          message="手機號碼格式不對"
+          message={message}
           onClose={() => {
             setShowMessage(false);
           }}

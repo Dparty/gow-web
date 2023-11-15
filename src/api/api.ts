@@ -1,46 +1,31 @@
-import { Configuration, ConfigurationParameters, RestaurantApi } from "@dparty/restaurant-ts-sdk";
 import axios from "axios";
+import { PhoneNumber, LoginProps, RegisterParams} from "../types";
 
 export const token = localStorage.getItem("USERTOKEN");
 
-// export const basePath = "https://ordering-api-uat.sum-foods.com";
-export const basePath = "https://restaurant-uat.sum-foods.com";
-// if (window.location.hostname === "ordering-uat.sum-foods.com") {
-//   basePath = "https://ordering-api-uat.sum-foods.com";
-// }
 export const baseUrl = "https://gow.macao-notification.com";
 
 const axiosConfig = {
   headers: {
       'Content-Type': 'application/json;charset=UTF-8',
-      // "Access-Control-Allow-Origin": "*",
   }
 };
 
-
-
-export const restaurantApi = new RestaurantApi(
-  new Configuration({
-    basePath: basePath,
-  } as ConfigurationParameters)
-);
-
-export const getVerifyCode = async (data: any) => {
+export const getVerifyCode = async (data: {phoneNumber: PhoneNumber}) => {
   return await axios.post(`${baseUrl}/verification`,  data, axiosConfig);
 };
 
-export const login = async (data: any) => {
-  const res = await axios.post(`${baseUrl}/sessions`,  data, axiosConfig);
+export const login = async (data: LoginProps) => {
+  const res = await axios.post(`${baseUrl}/sessions`,  data);
   return res.data;
 };
 
-export const register = async (data: any) => {
+export const register = async (data: RegisterParams) => {
     const res = await axios.post(`${baseUrl}/accounts`,  data, axiosConfig);
     return res.data;
 };
 
 export const getAccountInfo = async () => {
-  
   if(!token)  return; // navigate
   const config: any = {
     headers: {
